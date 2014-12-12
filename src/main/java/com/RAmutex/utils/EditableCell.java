@@ -11,7 +11,7 @@ import javafx.scene.input.KeyEvent;
 /**
  * Created by Robert on 2014-12-12.
  */
-public abstract class EditableCell<T>  extends TableCell<Node, T>
+public abstract class EditableCell<S, T>  extends TableCell<S, T>
 {
     protected TextField textField;
 

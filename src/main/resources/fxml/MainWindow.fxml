@@ -7,14 +7,14 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.RAmutex.MainWindowController">
    <children>
-      <TableView fx:id="nodesTable" editable="true" layoutX="2.0" layoutY="108.0" prefHeight="183.0" prefWidth="150.0">
+      <TableView fx:id="nodesTableView" editable="true" layoutX="2.0" layoutY="108.0" prefHeight="183.0" prefWidth="150.0">
         <columns>
           <TableColumn fx:id="IPTableColumn" editable="true" prefWidth="75.0" text="IP" />
           <TableColumn fx:id="portTableColumn" editable="true" prefWidth="75.0" text="port" />
         </columns>
       </TableView>
-      <TextArea fx:id="receivedDataTextArea" layoutX="428.0" layoutY="329.0" prefHeight="271.0" prefWidth="373.0" />
-      <TextArea fx:id="sentDataTextArea" layoutX="2.0" layoutY="329.0" prefHeight="271.0" prefWidth="373.0" />
+      <TextArea fx:id="receivedDataTextArea" layoutX="428.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
+      <TextArea fx:id="sentDataTextArea" layoutX="2.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
       <Button layoutX="235.0" layoutY="101.0" mnemonicParsing="false" onAction="#connectButtonPressed" text="connect">
          <font>
             <Font size="20.0" />
@@ -30,12 +30,12 @@
             <Font size="20.0" />
          </font>
       </Button>
-      <Label layoutX="137.0" layoutY="286.0" prefHeight="38.0" prefWidth="110.0" text="sent data">
+      <Label layoutX="121.0" layoutY="323.0" prefHeight="38.0" prefWidth="110.0" text="sent data">
          <font>
             <Font size="26.0" />
          </font>
       </Label>
-      <Label layoutX="535.0" layoutY="285.0" prefHeight="38.0" prefWidth="160.0" text="received data">
+      <Label layoutX="519.0" layoutY="322.0" prefHeight="38.0" prefWidth="160.0" text="received data">
          <font>
             <Font size="26.0" />
          </font>
@@ -57,10 +57,10 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <TableView layoutX="435.0" layoutY="59.0" prefHeight="200.0" prefWidth="245.0">
+      <TableView fx:id="timeoutsTableView" editable="true" layoutX="343.0" layoutY="8.0" prefHeight="122.0" prefWidth="443.0">
         <columns>
-          <TableColumn prefWidth="102.0" text="timeout [ms]" />
-          <TableColumn editable="false" prefWidth="74.0" text="description" />
+          <TableColumn fx:id="timeoutTableColumn" prefWidth="102.0" text="timeout [ms]" />
+          <TableColumn fx:id="descriptionTimeoutTableColumn" editable="false" prefWidth="340.0" text="description" />
         </columns>
       </TableView>
       <Button layoutX="166.0" layoutY="123.0" mnemonicParsing="false" onAction="#addNodeButtonPressed" prefHeight="35.0" prefWidth="32.0" text="+">
@@ -73,5 +73,11 @@
             <Font size="20.0" />
          </font>
       </Button>
+      <TextArea fx:id="applicationStateTextArea" layoutX="343.0" layoutY="177.0" prefHeight="144.0" prefWidth="443.0" />
+      <Label layoutX="466.0" layoutY="130.0" prefHeight="38.0" prefWidth="197.0" text="application state">
+         <font>
+            <Font size="26.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
