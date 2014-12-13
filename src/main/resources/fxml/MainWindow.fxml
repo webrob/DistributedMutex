@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -20,12 +21,12 @@
             <Font size="20.0" />
          </font>
       </Button>
-      <Button layoutX="235.0" layoutY="159.0" mnemonicParsing="false" text="enter">
+      <Button layoutX="235.0" layoutY="159.0" mnemonicParsing="false" onAction="#enterButtonPressed" text="enter">
          <font>
             <Font size="20.0" />
          </font>
       </Button>
-      <Button layoutX="235.0" layoutY="218.0" mnemonicParsing="false" text="leave">
+      <Button layoutX="235.0" layoutY="218.0" mnemonicParsing="false" onAction="#leaveButtonPressed" text="leave">
          <font>
             <Font size="20.0" />
          </font>
@@ -40,7 +41,6 @@
             <Font size="26.0" />
          </font>
       </Label>
-      <TextField fx:id="myIPTextField" layoutX="15.0" layoutY="36.0" />
       <Label layoutX="57.0" layoutY="66.0" text="nodes">
          <font>
             <Font size="24.0" />
@@ -79,5 +79,6 @@
             <Font size="26.0" />
          </font>
       </Label>
+      <Label fx:id="myIPLabel" layoutX="14.0" layoutY="35.0" prefHeight="25.0" prefWidth="130.0" />
    </children>
 </AnchorPane>
