@@ -44,12 +44,12 @@ public class TextAreaControllerSingleton
 
     public void showReceivedDataMessage(String message)
     {
-	Platform.runLater(() -> receivedDataTextArea.setText(getMessageWithNewLine(message)));
+	Platform.runLater(() -> receivedDataTextArea.appendText(getMessageWithNewLine(message)));
     }
 
     public void showSentDataMessage(String message)
     {
-	Platform.runLater(() -> sentDataTextArea.setText(getMessageWithNewLine(message)));
+	Platform.runLater(() -> sentDataTextArea.appendText(getMessageWithNewLine(message)));
     }
 
     private String getMessageWithNewLine(String message)

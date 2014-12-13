@@ -44,7 +44,7 @@ public class NodesTableInitialization
     private void makeNodesTableColumnsEditable()
     {
 	Callback<TableColumn<Node, Integer>, TableCell<Node, Integer>> portCellFactory = p -> new IntegerEditableCell();
-	Callback<TableColumn<Node, String>, TableCell<Node, String>> IPCellFactory = p -> new StringEditableCell();
+	Callback<TableColumn<Node, String>, TableCell<Node, String>> IPCellFactory = p -> new IPAdressEditableCell();
 
 	portTableColumn.setCellFactory(portCellFactory);
 	IPTableColumn.setCellFactory(IPCellFactory);

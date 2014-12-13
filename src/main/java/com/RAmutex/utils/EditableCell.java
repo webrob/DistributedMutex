@@ -8,6 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.net.UnknownHostException;
+
 /**
  * Created by Robert on 2014-12-12.
  */
@@ -15,7 +17,7 @@ public abstract class EditableCell<S, T>  extends TableCell<S, T>
 {
     protected TextField textField;
 
-    protected abstract T getFieldToCommit();
+    protected abstract T getFieldToCommit() throws Exception;
 
     @Override
     public void startEdit()
@@ -86,7 +88,7 @@ public abstract class EditableCell<S, T>  extends TableCell<S, T>
 			T field = getFieldToCommit();
 			commitEdit(field);
 		    }
-		    catch (NumberFormatException ignored)
+		    catch (Exception ignored)
 		    {
 			cancelEdit();
 		    }

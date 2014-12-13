@@ -16,14 +16,13 @@ public class Node
 
     private static int defaultPort = GlobalParameters.DEAFULT_PORT;
 
-    public Node ()
+    public Node()
     {
         defaultPort++;
 
-	IP = new SimpleStringProperty(GlobalParameters.LOCALHOST);
+        IP = new SimpleStringProperty(GlobalParameters.LOCALHOST);
         port = new SimpleIntegerProperty(defaultPort);
     }
-
 
     public Node(String IP, Integer port)
     {
@@ -33,21 +32,27 @@ public class Node
 
     public String getIP()
     {
-	return IP.get();
+        return IP.get();
     }
 
     public void setIP(String IP)
     {
-	this.IP.set(IP);
+        this.IP.set(IP);
     }
 
     public Integer getPort()
     {
-	return port.get();
+        return port.get();
     }
 
     public void setPort(Integer port)
     {
-	this.port.set(port);
+        this.port.set(port);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "address: " + getIP() + " port: " + getPort();
     }
 }

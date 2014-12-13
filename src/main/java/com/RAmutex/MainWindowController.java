@@ -3,19 +3,21 @@ package com.RAmutex;
 import com.RAmutex.model.Node;
 import com.RAmutex.model.Timeout;
 import com.RAmutex.network.AllConnectionsManager;
-import com.RAmutex.network.OutputConnectionManager;
 import com.RAmutex.utils.GlobalParameters;
 import com.RAmutex.utils.NodesTableInitialization;
 import com.RAmutex.utils.TextAreaControllerSingleton;
 import com.RAmutex.utils.TimeoutsTableInitialization;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -24,6 +26,7 @@ import java.util.ResourceBundle;
  */
 public class MainWindowController implements Initializable
 {
+
     @FXML private TableView<Timeout> timeoutsTableView;
     @FXML private TableColumn<Timeout, Integer> timeoutTableColumn;
     @FXML private TableColumn<Timeout, String> descriptionTimeoutTableColumn;
@@ -37,21 +40,30 @@ public class MainWindowController implements Initializable
     @FXML private TextArea sentDataTextArea;
 
     @FXML private TextField myPortTextField;
-    @FXML private TextField myIPTextField;
-
+    @FXML private Label myIPLabel;
+    private AllConnectionsManager manager;
 
     @FXML private void connectButtonPressed(ActionEvent actionEvent)
     {
 	List<Node> nodes = nodesTableView.getItems();
 	Node myNode = getMyNode();
 
-	AllConnectionsManager manager = new AllConnectionsManager(nodes, myNode);
+	manager = new AllConnectionsManager(nodes, myNode);
 	manager.startConnections();
+
+        try
+        {
+            System.out.println(InetAddress.getLocalHost().getHostAddress());
+        }
+        catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private Node getMyNode()
     {
-	String myIP = myIPTextField.getText();
+	String myIP = myIPLabel.getText();
 	Integer myPort = Integer.parseInt(myPortTextField.getText());
 	return new Node(myIP, myPort);
     }
@@ -80,7 +92,7 @@ public class MainWindowController implements Initializable
 
     private void initMyIPandPortTextFields()
     {
-	myIPTextField.setText(GlobalParameters.LOCALHOST);
+        myIPLabel.setText(GlobalParameters.LOCALHOST);
 	myPortTextField.setText(Integer.toString(GlobalParameters.DEAFULT_PORT));
     }
 
@@ -101,5 +113,15 @@ public class MainWindowController implements Initializable
 	{
 	    items.remove(selectedItem);
 	}
+    }
+
+    public void enterButtonPressed(ActionEvent actionEvent)
+    {
+        manager.sendBroadcastEnterMessage();
+    }
+
+    public void leaveButtonPressed(ActionEvent actionEvent)
+    {
+
     }
 }
