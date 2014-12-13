@@ -13,8 +13,8 @@
           <TableColumn fx:id="portTableColumn" editable="true" prefWidth="75.0" text="port" />
         </columns>
       </TableView>
-      <TextArea fx:id="receivedDataTextArea" layoutX="428.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
-      <TextArea fx:id="sentDataTextArea" layoutX="2.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
+      <TextArea fx:id="receivedDataTextArea" editable="false" layoutX="428.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
+      <TextArea fx:id="sentDataTextArea" editable="false" layoutX="2.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
       <Button layoutX="235.0" layoutY="101.0" mnemonicParsing="false" onAction="#connectButtonPressed" text="connect">
          <font>
             <Font size="20.0" />
@@ -73,7 +73,7 @@
             <Font size="20.0" />
          </font>
       </Button>
-      <TextArea fx:id="applicationStateTextArea" layoutX="343.0" layoutY="177.0" prefHeight="144.0" prefWidth="443.0" />
+      <TextArea fx:id="applicationStateTextArea" editable="false" layoutX="343.0" layoutY="177.0" prefHeight="144.0" prefWidth="443.0" />
       <Label layoutX="466.0" layoutY="130.0" prefHeight="38.0" prefWidth="197.0" text="application state">
          <font>
             <Font size="26.0" />
