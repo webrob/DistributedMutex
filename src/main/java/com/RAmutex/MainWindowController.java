@@ -2,9 +2,13 @@ package com.RAmutex;
 
 import com.RAmutex.model.Node;
 import com.RAmutex.model.Timeout;
+import com.RAmutex.network.AllConnectionsManager;
+import com.RAmutex.network.OutputConnectionManager;
 import com.RAmutex.utils.GlobalParameters;
 import com.RAmutex.utils.NodesTableInitialization;
+import com.RAmutex.utils.TextAreaControllerSingleton;
 import com.RAmutex.utils.TimeoutsTableInitialization;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -37,19 +42,24 @@ public class MainWindowController implements Initializable
 
     @FXML private void connectButtonPressed(ActionEvent actionEvent)
     {
+	List<Node> nodes = nodesTableView.getItems();
+	Node myNode = getMyNode();
 
+	AllConnectionsManager manager = new AllConnectionsManager(nodes, myNode);
+	manager.startConnections();
     }
 
-
-
-    private void initMyIPandPortTextFields()
+    private Node getMyNode()
     {
-	myIPTextField.setText(GlobalParameters.LOCALHOST);
-	myPortTextField.setText(Integer.toString(GlobalParameters.DEAFULT_PORT));
+	String myIP = myIPTextField.getText();
+	Integer myPort = Integer.parseInt(myPortTextField.getText());
+	return new Node(myIP, myPort);
     }
 
     @Override public void initialize(URL location, ResourceBundle resources)
     {
+        initTextAreaControllerSingleton();
+
 	NodesTableInitialization nodesTable = new NodesTableInitialization(nodesTableView, IPTableColumn, portTableColumn);
 	nodesTable.initialize();
 
@@ -57,7 +67,23 @@ public class MainWindowController implements Initializable
 	timeoutsTable.initialize();
 
 	initMyIPandPortTextFields();
+
     }
+
+    private void initTextAreaControllerSingleton()
+    {
+        TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
+        singleton.setApplicationStateTextArea(applicationStateTextArea);
+        singleton.setReceivedDataTextArea(receivedDataTextArea);
+        singleton.setSentDataTextArea(sentDataTextArea);
+    }
+
+    private void initMyIPandPortTextFields()
+    {
+	myIPTextField.setText(GlobalParameters.LOCALHOST);
+	myPortTextField.setText(Integer.toString(GlobalParameters.DEAFULT_PORT));
+    }
+
 
     @FXML private void addNodeButtonPressed(ActionEvent actionEvent)
     {

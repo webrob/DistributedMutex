@@ -25,6 +25,12 @@ public class Node
     }
 
 
+    public Node(String IP, Integer port)
+    {
+        this.IP = new SimpleStringProperty(IP);
+        this.port = new SimpleIntegerProperty(port);
+    }
+
     public String getIP()
     {
 	return IP.get();

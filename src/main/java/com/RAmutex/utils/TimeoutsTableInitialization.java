@@ -37,7 +37,9 @@ public class TimeoutsTableInitialization
     private void putFirstNodeToNodesTable()
     {
 	ObservableList<Timeout> nodes = FXCollections.observableArrayList();
-	nodes.add(new Timeout(10000, "time of section occupation"));
+	nodes.add(new Timeout(GlobalParameters.maxSectionOccupationTime, GlobalParameters.MAX_SECTION_OCCUPATION_TIME_DESCRIPTION));
+	nodes.add(new Timeout(GlobalParameters.reconnectionPeriod, GlobalParameters.RECONNECTION_PERIOD_DESCRIPTION));
+
 	timeoutsTableView.setItems(nodes);
     }
 
@@ -47,7 +49,25 @@ public class TimeoutsTableInitialization
 	timeoutTableColumn.setCellFactory(timeoutCellFactory);
 
 	timeoutTableColumn.setOnEditCommit(
-			t -> (t.getTableView().getItems().get(t.getTablePosition().getRow())).setValueInMilSec(
-					t.getNewValue()));
+			t -> {
+			    int index = t.getTablePosition().getRow();
+			    Timeout timeout = t.getTableView().getItems().get(index);
+			    Integer newValue = t.getNewValue();
+			    timeout.setValueInMilSec(newValue);
+
+			    setNewGlobalTimeouts(timeout.getDescription(), newValue);
+			});
+    }
+
+    private void setNewGlobalTimeouts(String timeoutDescription, Integer newValue)
+    {
+	if (timeoutDescription.equals(GlobalParameters.MAX_SECTION_OCCUPATION_TIME_DESCRIPTION))
+	{
+	    GlobalParameters.maxSectionOccupationTime = newValue;
+	}
+	else if (timeoutDescription.equals(GlobalParameters.RECONNECTION_PERIOD_DESCRIPTION))
+	{
+	    GlobalParameters.reconnectionPeriod = newValue;
+	}
     }
 }
