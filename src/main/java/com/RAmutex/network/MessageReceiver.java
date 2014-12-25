@@ -2,42 +2,88 @@ package com.RAmutex.network;
 
 import com.RAmutex.utils.TextAreaControllerSingleton;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Scanner;
 
-public class MessageReceiver implements Runnable
+public class MessageReceiver extends Thread
 {
-
+    private BufferedReader bufferedReader;
     private TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
-    private Scanner messageScanner;
     private boolean isWorking = true;
     private Socket clientSocket;
 
-    public MessageReceiver(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-        try {
-            messageScanner = new Scanner(new InputStreamReader(clientSocket.getInputStream())).useDelimiter("\\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public MessageReceiver(Socket clientSocket)
+    {
+	this.clientSocket = clientSocket;
+	try
+	{
+	    bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+	}
+	catch (IOException e)
+	{
+	    e.printStackTrace();
+	}
     }
 
     @Override
-    public void run() {
-        while (isWorking) {
-           listenForClientMessages();
-        }
+    public void run()
+    {
+	try
+	{
+	    while (isWorking)
+	    {
+		listenForClientMessages();
+	    }
+	}
+	catch (IOException e)
+	{
+	    e.printStackTrace();
+	}
     }
 
-    private void listenForClientMessages()
+    public void stopWorking()
     {
-        String hostAddress = clientSocket.getInetAddress().getHostAddress();
-        while (messageScanner.hasNext())
-        {
-            String line = messageScanner.next();
-            singleton.showReceivedDataMessage(line + " received from " +hostAddress);
-        }
+	isWorking = false;
+	try
+	{
+	    if (clientSocket != null)
+	    {
+		clientSocket.close();
+		clientSocket = null;
+	    }
+	    if (bufferedReader != null)
+	    {
+		bufferedReader.close();
+		bufferedReader = null;
+	    }
+	}
+	catch (IOException e)
+	{
+	    e.printStackTrace();
+	}
     }
+
+    private void listenForClientMessages() throws IOException
+    {
+	String hostAddress = clientSocket.getInetAddress().getHostAddress();
+	if (bufferedReader != null)
+	{
+	    String line = bufferedReader.readLine();
+	    if (line != null)
+	    {
+		singleton.showReceivedDataMessage(line + " received from " + hostAddress);
+	    }
+	    else
+	    {
+		isWorking = false;
+	    }
+	}
+	else
+	{
+	    isWorking = false;
+	}
+    }
+
 }

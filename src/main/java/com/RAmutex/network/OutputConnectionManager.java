@@ -21,7 +21,7 @@ public class OutputConnectionManager
 {
     private ExecutorService connectionsService;
     private List<Node> nodes;
-    private static List<MessageSender> messageSenders = new ArrayList<>();
+    private List<MessageSender> messageSenders = new ArrayList<>();
 
     public OutputConnectionManager(List<Node> nodes)
     {
@@ -38,6 +38,7 @@ public class OutputConnectionManager
     {
         MessageSender sender = new MessageSender(node);
         connectionsService.submit(sender);
+        //sender.start();
         messageSenders.add(sender);
     }
 
@@ -47,5 +48,11 @@ public class OutputConnectionManager
 	{
 	    sender.writeMessageToClient(message.toString());
 	}
+    }
+
+    public void closeSockets()
+    {
+        messageSenders.forEach(MessageSender::stopRunning);
+        connectionsService.shutdownNow();
     }
 }

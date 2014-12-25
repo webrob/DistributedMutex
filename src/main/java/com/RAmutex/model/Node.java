@@ -14,7 +14,7 @@ public class Node
     private StringProperty IP;
     private IntegerProperty port;
 
-    private static int defaultPort = GlobalParameters.DEAFULT_PORT;
+    private static int defaultPort = GlobalParameters.DEFAULT_PORT;
 
     public Node()
     {

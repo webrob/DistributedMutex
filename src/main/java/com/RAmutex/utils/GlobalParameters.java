@@ -6,7 +6,7 @@ package com.RAmutex.utils;
 public class GlobalParameters
 {
     public static final String LOCALHOST = "127.0.0.1";
-    public static final int DEAFULT_PORT = 20000;
+    public static final int DEFAULT_PORT = 20000;
 
     public static int reconnectionPeriod = 2000;
     public static final String RECONNECTION_PERIOD_DESCRIPTION = "reconnection period";

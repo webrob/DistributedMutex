@@ -3,17 +3,17 @@ package com.RAmutex;
 import com.RAmutex.model.Node;
 import com.RAmutex.model.Timeout;
 import com.RAmutex.network.AllConnectionsManager;
+import com.RAmutex.network.AllConnectionsManagerEmpty;
+import com.RAmutex.network.AllConnectionsManagerImpl;
 import com.RAmutex.utils.GlobalParameters;
 import com.RAmutex.utils.NodesTableInitialization;
 import com.RAmutex.utils.TextAreaControllerSingleton;
 import com.RAmutex.utils.TimeoutsTableInitialization;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.stage.Stage;
 
 import java.net.InetAddress;
 import java.net.URL;
@@ -41,14 +41,15 @@ public class MainWindowController implements Initializable
 
     @FXML private TextField myPortTextField;
     @FXML private Label myIPLabel;
-    private AllConnectionsManager manager;
+    private AllConnectionsManager manager = new AllConnectionsManagerEmpty();
 
-    @FXML private void connectButtonPressed(ActionEvent actionEvent)
+    @FXML
+    private void connectButtonPressed()
     {
 	List<Node> nodes = nodesTableView.getItems();
 	Node myNode = getMyNode();
 
-	manager = new AllConnectionsManager(nodes, myNode);
+	manager = new AllConnectionsManagerImpl(nodes, myNode);
 	manager.startConnections();
 
         try
@@ -80,6 +81,7 @@ public class MainWindowController implements Initializable
 
 	initMyIPandPortTextFields();
 
+
     }
 
     private void initTextAreaControllerSingleton()
@@ -93,17 +95,19 @@ public class MainWindowController implements Initializable
     private void initMyIPandPortTextFields()
     {
         myIPLabel.setText(GlobalParameters.LOCALHOST);
-	myPortTextField.setText(Integer.toString(GlobalParameters.DEAFULT_PORT));
+	myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT));
     }
 
 
-    @FXML private void addNodeButtonPressed(ActionEvent actionEvent)
+    @FXML
+    private void addNodeButtonPressed()
     {
 	ObservableList<Node> items = nodesTableView.getItems();
 	items.add(new Node());
     }
 
-    @FXML private void removeNodeButtonPressed(ActionEvent actionEvent)
+    @FXML
+    private void removeNodeButtonPressed()
     {
 	ObservableList<Node> items = nodesTableView.getItems();
 	Node selectedItem = nodesTableView.getSelectionModel().getSelectedItem();
@@ -115,13 +119,21 @@ public class MainWindowController implements Initializable
 	}
     }
 
-    public void enterButtonPressed(ActionEvent actionEvent)
+    @FXML
+    private void enterButtonPressed()
     {
         manager.sendBroadcastEnterMessage();
     }
 
-    public void leaveButtonPressed(ActionEvent actionEvent)
+    @FXML
+    private void leaveButtonPressed()
     {
 
     }
+
+    public void setStage(Stage stage)
+    {
+        stage.setOnCloseRequest(event -> manager.closeAllSockets());
+    }
+
 }
