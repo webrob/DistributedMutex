@@ -1,7 +1,6 @@
-package com.RAmutex.utils;
+package com.RAmutex.ui;
 
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 
 /**

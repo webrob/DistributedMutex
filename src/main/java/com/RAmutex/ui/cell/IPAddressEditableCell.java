@@ -1,4 +1,6 @@
-package com.RAmutex.utils;
+package com.RAmutex.ui.cell;
+
+import com.RAmutex.ui.cell.EditableCell;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -6,7 +8,7 @@ import java.net.UnknownHostException;
 /**
  * Created by Robert on 2014-12-12.
  */
-public class IPAdressEditableCell<S> extends EditableCell<S, String>
+public class IPAddressEditableCell<S> extends EditableCell<S, String>
 {
     @Override protected String getFieldToCommit() throws UnknownHostException
     {

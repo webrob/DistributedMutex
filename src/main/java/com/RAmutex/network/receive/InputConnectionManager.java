@@ -1,16 +1,13 @@
-package com.RAmutex.network;
+package com.RAmutex.network.receive;
 
-import com.RAmutex.utils.TextAreaControllerSingleton;
+import com.RAmutex.model.Message;
+import com.RAmutex.ui.TextAreaControllerSingleton;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by Robert on 2014-12-12.
@@ -18,16 +15,15 @@ import java.util.concurrent.Executors;
 public class InputConnectionManager implements Runnable
 {
     private int myPortToListen;
-    private ExecutorService connectionsService;
-    private List<MessageReceiver> messageReceivers = new ArrayList<>();
     private ServerSocket serverSocket;
     private boolean isWorking;
     private TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
+    private final BlockingQueue<Message> criticalSectionQueue;
 
-    public InputConnectionManager(int myPortToListen)
+    public InputConnectionManager(int myPortToListen, BlockingQueue<Message> criticalSectionQueue)
     {
 	this.myPortToListen = myPortToListen;
-	connectionsService = Executors.newFixedThreadPool(30);
+	this.criticalSectionQueue = criticalSectionQueue;
     }
 
     @Override
@@ -62,10 +58,9 @@ public class InputConnectionManager implements Runnable
 	while (isWorking)
 	{
 	    Socket clientSocket = serverSocket.accept();
-	    MessageReceiver reader = new MessageReceiver(clientSocket);
-	    connectionsService.submit(reader);
-	    //reader.start();
-	    messageReceivers.add(reader);
+	    MessageReceiver reader = new MessageReceiver(clientSocket, criticalSectionQueue);
+	    reader.setDaemon(true);
+	    reader.start();
 	    InetAddress hostAddress = clientSocket.getInetAddress();
 	    singleton.showApplicationStateMessage("accepted connection from: " + hostAddress);
 	}
@@ -73,6 +68,7 @@ public class InputConnectionManager implements Runnable
 
     protected void closeServerSocket()
     {
+	/*
 	try
 	{
 	    isWorking = false;
@@ -80,14 +76,12 @@ public class InputConnectionManager implements Runnable
 	    {
 		serverSocket.close();
 	    }
-	    System.out.println("close server socket");
-	    messageReceivers.forEach(MessageReceiver::stopWorking);
-	    connectionsService.shutdownNow();
 	}
 	catch (IOException e)
 	{
 	    e.printStackTrace();
 	}
+	*/
     }
 
 

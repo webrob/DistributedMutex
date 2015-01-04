@@ -6,9 +6,9 @@ import com.RAmutex.network.AllConnectionsManager;
 import com.RAmutex.network.AllConnectionsManagerEmpty;
 import com.RAmutex.network.AllConnectionsManagerImpl;
 import com.RAmutex.utils.GlobalParameters;
-import com.RAmutex.utils.NodesTableInitialization;
-import com.RAmutex.utils.TextAreaControllerSingleton;
-import com.RAmutex.utils.TimeoutsTableInitialization;
+import com.RAmutex.ui.NodesTableInitialization;
+import com.RAmutex.ui.TextAreaControllerSingleton;
+import com.RAmutex.ui.TimeoutsTableInitialization;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
  */
 public class MainWindowController implements Initializable
 {
-
     @FXML private TableView<Timeout> timeoutsTableView;
     @FXML private TableColumn<Timeout, Integer> timeoutTableColumn;
     @FXML private TableColumn<Timeout, String> descriptionTimeoutTableColumn;
@@ -34,12 +33,14 @@ public class MainWindowController implements Initializable
     @FXML private TableView<Node> nodesTableView;
     @FXML private TableColumn<Node, String> IPTableColumn;
     @FXML private TableColumn<Node, Integer> portTableColumn;
+    @FXML private TableColumn<Node, String> idTableColumn;
 
     @FXML private TextArea applicationStateTextArea;
     @FXML private TextArea receivedDataTextArea;
     @FXML private TextArea sentDataTextArea;
 
     @FXML private TextField myPortTextField;
+    @FXML private TextField myIDTextField;
     @FXML private Label myIPLabel;
     private AllConnectionsManager manager = new AllConnectionsManagerEmpty();
 
@@ -51,53 +52,53 @@ public class MainWindowController implements Initializable
 
 	manager = new AllConnectionsManagerImpl(nodes, myNode);
 	manager.startConnections();
-
-        try
-        {
-            System.out.println(InetAddress.getLocalHost().getHostAddress());
-        }
-        catch (UnknownHostException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     private Node getMyNode()
     {
 	String myIP = myIPLabel.getText();
 	Integer myPort = Integer.parseInt(myPortTextField.getText());
-	return new Node(myIP, myPort);
+	String myID = myIDTextField.getText();
+	return new Node(myIP, myPort, myID);
     }
 
     @Override public void initialize(URL location, ResourceBundle resources)
     {
-        initTextAreaControllerSingleton();
+	initTextAreaControllerSingleton();
 
-	NodesTableInitialization nodesTable = new NodesTableInitialization(nodesTableView, IPTableColumn, portTableColumn);
+	NodesTableInitialization nodesTable = new NodesTableInitialization(nodesTableView, IPTableColumn,
+			portTableColumn, idTableColumn);
 	nodesTable.initialize();
 
-	TimeoutsTableInitialization timeoutsTable = new TimeoutsTableInitialization(timeoutsTableView, descriptionTimeoutTableColumn, timeoutTableColumn);
+	TimeoutsTableInitialization timeoutsTable = new TimeoutsTableInitialization(timeoutsTableView,
+			descriptionTimeoutTableColumn, timeoutTableColumn);
 	timeoutsTable.initialize();
 
 	initMyIPandPortTextFields();
 
-
+	try
+	{
+	    myIPLabel.setText(InetAddress.getLocalHost().getHostAddress());
+	}
+	catch (UnknownHostException ignored)
+	{
+	}
     }
 
     private void initTextAreaControllerSingleton()
     {
-        TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
-        singleton.setApplicationStateTextArea(applicationStateTextArea);
-        singleton.setReceivedDataTextArea(receivedDataTextArea);
-        singleton.setSentDataTextArea(sentDataTextArea);
+	TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
+	singleton.setApplicationStateTextArea(applicationStateTextArea);
+	singleton.setReceivedDataTextArea(receivedDataTextArea);
+	singleton.setSentDataTextArea(sentDataTextArea);
     }
 
     private void initMyIPandPortTextFields()
     {
-        myIPLabel.setText(GlobalParameters.LOCALHOST);
+	myIPLabel.setText(GlobalParameters.LOCALHOST);
 	myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT));
+	myIDTextField.setText(GlobalParameters.DEFAULT_ID);
     }
-
 
     @FXML
     private void addNodeButtonPressed()
@@ -122,7 +123,7 @@ public class MainWindowController implements Initializable
     @FXML
     private void enterButtonPressed()
     {
-        manager.sendBroadcastEnterMessage();
+	manager.sendBroadcastEnterMessage();
     }
 
     @FXML
@@ -133,7 +134,7 @@ public class MainWindowController implements Initializable
 
     public void setStage(Stage stage)
     {
-        stage.setOnCloseRequest(event -> manager.closeAllSockets());
+	//stage.setOnCloseRequest(event -> manager.closeAllSockets());
     }
 
 }

@@ -13,21 +13,26 @@ public class Node
 {
     private StringProperty IP;
     private IntegerProperty port;
+    private StringProperty id;
 
     private static int defaultPort = GlobalParameters.DEFAULT_PORT;
+    private static int defaultID = 1;
 
     public Node()
     {
-        defaultPort++;
+        //defaultPort++;
+        defaultID++;
 
         IP = new SimpleStringProperty(GlobalParameters.LOCALHOST);
         port = new SimpleIntegerProperty(defaultPort);
+        id = new SimpleStringProperty(Integer.toString(defaultID));
     }
 
-    public Node(String IP, Integer port)
+    public Node(String IP, Integer port, String id)
     {
         this.IP = new SimpleStringProperty(IP);
         this.port = new SimpleIntegerProperty(port);
+        this.id = new SimpleStringProperty(id);
     }
 
     public String getIP()
@@ -53,6 +58,16 @@ public class Node
     @Override
     public String toString()
     {
-        return "address: " + getIP() + " port: " + getPort();
+        return "address: " + getIP() + " port: " + getPort() + " id: " + getId();
+    }
+
+    public String getId()
+    {
+        return id.get();
+    }
+
+    public void setId(String id)
+    {
+        this.id.set(id);
     }
 }

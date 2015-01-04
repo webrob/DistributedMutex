@@ -1,4 +1,4 @@
-package com.RAmutex.utils;
+package com.RAmutex.ui.cell;
 
 import com.RAmutex.model.Node;
 import javafx.event.EventHandler;

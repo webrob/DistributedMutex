@@ -1,11 +1,16 @@
-package com.RAmutex.network;
+package com.RAmutex.network.receive;
 
-import com.RAmutex.utils.TextAreaControllerSingleton;
+import com.RAmutex.model.JSONtoMessageConverter;
+import com.RAmutex.model.Message;
+import com.RAmutex.ui.TextAreaControllerSingleton;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MessageReceiver extends Thread
 {
@@ -13,10 +18,13 @@ public class MessageReceiver extends Thread
     private TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
     private boolean isWorking = true;
     private Socket clientSocket;
+    private final BlockingQueue<Message> criticalSectionQueue;
 
-    public MessageReceiver(Socket clientSocket)
+
+    public MessageReceiver(Socket clientSocket, BlockingQueue<Message> criticalSectionQueue)
     {
 	this.clientSocket = clientSocket;
+	this.criticalSectionQueue = criticalSectionQueue;
 	try
 	{
 	    bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -37,7 +45,7 @@ public class MessageReceiver extends Thread
 		listenForClientMessages();
 	    }
 	}
-	catch (IOException e)
+	catch (IOException | InterruptedException e)
 	{
 	    e.printStackTrace();
 	}
@@ -65,12 +73,15 @@ public class MessageReceiver extends Thread
 	}
     }
 
-    private void listenForClientMessages() throws IOException
+    private void listenForClientMessages() throws IOException, InterruptedException
     {
 	String hostAddress = clientSocket.getInetAddress().getHostAddress();
 	if (bufferedReader != null)
 	{
 	    String line = bufferedReader.readLine();
+	    Message message = JSONtoMessageConverter.convert(line);
+	    criticalSectionQueue.put(message);
+
 	    if (line != null)
 	    {
 		singleton.showReceivedDataMessage(line + " received from " + hostAddress);

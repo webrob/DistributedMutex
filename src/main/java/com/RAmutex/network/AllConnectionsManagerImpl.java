@@ -3,8 +3,12 @@ package com.RAmutex.network;
 import com.RAmutex.model.Message;
 import com.RAmutex.model.MessageType;
 import com.RAmutex.model.Node;
+import com.RAmutex.network.receive.InputConnectionManager;
+import com.RAmutex.network.send.OutputConnectionManager;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Robert on 2014-12-12.
@@ -14,13 +18,12 @@ public class AllConnectionsManagerImpl implements AllConnectionsManager
     private List<Node> nodes;
     private Node myNode;
     private OutputConnectionManager outputConnectionManager;
-    private InputConnectionManager inputConnectionManager;
+    private BlockingQueue<Message> criticalSectionQueue = new LinkedBlockingQueue<>();
 
     public AllConnectionsManagerImpl(List<Node> nodes, Node myNode)
     {
 	this.nodes = nodes;
 	this.myNode = myNode;
-
     }
 
     public void startConnections()
@@ -37,25 +40,25 @@ public class AllConnectionsManagerImpl implements AllConnectionsManager
 
     private void startInputConnections()
     {
-        inputConnectionManager = new InputConnectionManager(myNode.getPort());
-        new Thread(inputConnectionManager).start();
+        InputConnectionManager inputConnectionManager = new InputConnectionManager(myNode.getPort(),
+                        criticalSectionQueue);
+        Thread thread = new Thread(inputConnectionManager);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void sendBroadcastEnterMessage()
     {
-        Message message = new Message(1l, MessageType.order);
+        Message message = new Message("1",1l, MessageType.REQUEST);
         outputConnectionManager.sendMessagesToAllNodes(message);
     }
 
     public void closeAllSockets()
     {
-        closeServerSocket();
-        outputConnectionManager.closeSockets();
+        //inputConnectionManager.closeServerSocket();
+        //outputConnectionManager.closeSockets();
     }
 
-    protected void closeServerSocket()
-    {
-        inputConnectionManager.closeServerSocket();
-    }
+
 
 }

@@ -1,26 +1,28 @@
-package com.RAmutex.network;
+package com.RAmutex.network.send;
 
+import com.RAmutex.model.Message;
 import com.RAmutex.model.Node;
 import com.RAmutex.utils.GlobalParameters;
-import com.RAmutex.utils.TextAreaControllerSingleton;
+import com.RAmutex.ui.TextAreaControllerSingleton;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 
 public class MessageSender extends Thread
 {
-    TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
+    private TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
     private Node node;
     private PrintWriter printWriter;
     private boolean isRunning = true;
     private Socket outputSocket;
+    private final BlockingQueue<Message> queue;
 
-    public MessageSender(Node node)
+    public MessageSender(Node node, BlockingQueue<Message> queue)
     {
 	this.node = node;
+	this.queue = queue;
     }
 
     @Override
@@ -28,6 +30,25 @@ public class MessageSender extends Thread
     {
 	establishConnection(node);
 	singleton.showApplicationStateMessage("connected to  " + node);
+
+
+	while (isRunning)
+	{
+	    try
+	    {
+		Message message = queue.take();
+		serveInternalMessage(message);
+	    }
+	    catch (InterruptedException e)
+	    {
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    private void serveInternalMessage(Message message)
+    {
+	writeMessageToClient(message);
     }
 
     private void establishConnection(Node node)
@@ -91,7 +112,7 @@ public class MessageSender extends Thread
 
     }
 
-    public synchronized void writeMessageToClient(String message)
+    private void writeMessageToClient(Message message)
     {
 	if (printWriter != null)
 	{
@@ -102,22 +123,5 @@ public class MessageSender extends Thread
 	{
 	    singleton.showSentDataMessage("No output connection");
 	}
-
-        /*
-	if (outToServer != null) {
-            try {
-                outToServer.writeBytes(message + "\n");
-                singleton.showSentDataMessage(message+ " sent to " + node);
-            } catch (IOException e) {
-                singleton.showSentDataMessage("Connection has been broken! Reconnecting...");
-                establishConnection(node);
-                singleton.showSentDataMessage("Repeating message");
-                writeMessageToClient(message);
-                //writeMessageToClient(message);  //TODO: To make sure that it went.
-            }
-        } else {
-            singleton.showSentDataMessage("No output connection");
-        }
-        */
     }
 }

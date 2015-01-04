@@ -1,6 +1,8 @@
-package com.RAmutex.utils;
+package com.RAmutex.ui;
 
 import com.RAmutex.model.Timeout;
+import com.RAmutex.ui.cell.IntegerEditableCell;
+import com.RAmutex.utils.GlobalParameters;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;

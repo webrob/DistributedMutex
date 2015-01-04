@@ -1,33 +1,40 @@
 package com.RAmutex.model;
 
 import com.google.common.base.Enums;
-import org.json.simple.JSONObject;
+import com.google.gson.Gson;
 
 public class Message
 {
+    private String id;
+    private Long clockValue;
+    private String type;
 
-    JSONObject jsonMsg;
-
-    public Message(Long clockValue, MessageType type) {
-        jsonMsg = new JSONObject();
-        jsonMsg.put("clock", clockValue);
-        jsonMsg.put("type", type.toString());
+    public String getId()
+    {
+	return id;
     }
 
-    public Message(Long clockValue, String type) {
-        this(clockValue, Enums.getIfPresent(MessageType.class, type).or(MessageType.unknown));
+    public Long getClockValue()
+    {
+	return clockValue;
     }
 
-    public Long getClockValue() {
-        return (Long) jsonMsg.get("clock");
+    public MessageType getType()
+    {
+	return Enums.getIfPresent(MessageType.class, type).or(MessageType.UNKNOWN);
     }
 
-    public MessageType getMessageType() {
-        String typeFieldFromJsonMessage = (String) jsonMsg.get("type");
-        return Enums.getIfPresent(MessageType.class, typeFieldFromJsonMessage).or(MessageType.unknown);
+    public Message(String id, Long clockValue, MessageType type)
+    {
+	this.id = id;
+	this.clockValue = clockValue;
+	this.type = type.toString();
     }
 
-    public String toString() {
-        return jsonMsg.toJSONString();
+    public String toString()
+    {
+	Gson gson = new Gson();
+	return gson.toJson(this);
     }
+
 }

@@ -8,25 +8,26 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.RAmutex.MainWindowController">
    <children>
-      <TableView fx:id="nodesTableView" editable="true" layoutX="2.0" layoutY="108.0" prefHeight="183.0" prefWidth="150.0">
+      <TableView fx:id="nodesTableView" editable="true" layoutX="2.0" layoutY="108.0" prefHeight="183.0" prefWidth="174.0">
         <columns>
-          <TableColumn fx:id="IPTableColumn" editable="true" prefWidth="75.0" text="IP" />
-          <TableColumn fx:id="portTableColumn" editable="true" prefWidth="75.0" text="port" />
+          <TableColumn fx:id="IPTableColumn" editable="true" prefWidth="70.0" text="IP" />
+          <TableColumn fx:id="portTableColumn" editable="true" prefWidth="72.0" text="port" />
+            <TableColumn fx:id="idTableColumn" editable="true" prefWidth="31.0" text="ID" />
         </columns>
       </TableView>
       <TextArea fx:id="receivedDataTextArea" editable="false" layoutX="428.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
       <TextArea fx:id="sentDataTextArea" editable="false" layoutX="2.0" layoutY="361.0" prefHeight="239.0" prefWidth="373.0" />
-      <Button layoutX="235.0" layoutY="101.0" mnemonicParsing="false" onAction="#connectButtonPressed" text="connect">
+      <Button layoutX="247.0" layoutY="101.0" mnemonicParsing="false" onAction="#connectButtonPressed" prefHeight="44.0" prefWidth="99.0" text="connect">
          <font>
             <Font size="20.0" />
          </font>
       </Button>
-      <Button layoutX="235.0" layoutY="159.0" mnemonicParsing="false" onAction="#enterButtonPressed" text="enter">
+      <Button layoutX="247.0" layoutY="159.0" mnemonicParsing="false" onAction="#enterButtonPressed" text="enter">
          <font>
             <Font size="20.0" />
          </font>
       </Button>
-      <Button layoutX="235.0" layoutY="218.0" mnemonicParsing="false" onAction="#leaveButtonPressed" text="leave">
+      <Button layoutX="247.0" layoutY="218.0" mnemonicParsing="false" onAction="#leaveButtonPressed" text="leave">
          <font>
             <Font size="20.0" />
          </font>
@@ -51,24 +52,24 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <TextField fx:id="myPortTextField" layoutX="173.0" layoutY="36.0" />
-      <Label layoutX="173.0" text="my  port">
+      <TextField fx:id="myPortTextField" layoutX="111.0" layoutY="36.0" prefHeight="25.0" prefWidth="99.0" />
+      <Label layoutX="111.0" text="my  port">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <TableView fx:id="timeoutsTableView" editable="true" layoutX="343.0" layoutY="8.0" prefHeight="122.0" prefWidth="443.0">
+      <TableView fx:id="timeoutsTableView" editable="true" layoutX="352.0" layoutY="8.0" prefHeight="122.0" prefWidth="443.0">
         <columns>
           <TableColumn fx:id="timeoutTableColumn" prefWidth="102.0" text="timeout [ms]" />
           <TableColumn fx:id="descriptionTimeoutTableColumn" editable="false" prefWidth="340.0" text="description" />
         </columns>
       </TableView>
-      <Button layoutX="166.0" layoutY="123.0" mnemonicParsing="false" onAction="#addNodeButtonPressed" prefHeight="35.0" prefWidth="32.0" text="+">
+      <Button layoutX="182.0" layoutY="123.0" mnemonicParsing="false" onAction="#addNodeButtonPressed" prefHeight="35.0" prefWidth="32.0" text="+">
          <font>
             <Font size="20.0" />
          </font>
       </Button>
-      <Button layoutX="166.0" layoutY="177.0" mnemonicParsing="false" onAction="#removeNodeButtonPressed" prefHeight="44.0" prefWidth="42.0" text="-">
+      <Button layoutX="182.0" layoutY="177.0" mnemonicParsing="false" onAction="#removeNodeButtonPressed" prefHeight="44.0" prefWidth="42.0" text="-">
          <font>
             <Font size="20.0" />
          </font>
@@ -79,6 +80,12 @@
             <Font size="26.0" />
          </font>
       </Label>
-      <Label fx:id="myIPLabel" layoutX="14.0" layoutY="35.0" prefHeight="25.0" prefWidth="130.0" />
+      <Label fx:id="myIPLabel" layoutX="14.0" layoutY="35.0" prefHeight="25.0" prefWidth="82.0" />
+      <Label layoutX="223.0" text="my  ID">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <TextField fx:id="myIDTextField" layoutX="219.0" layoutY="36.0" prefHeight="25.0" prefWidth="99.0" />
    </children>
 </AnchorPane>
