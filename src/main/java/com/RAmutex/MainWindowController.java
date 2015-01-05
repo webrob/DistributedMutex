@@ -5,11 +5,13 @@ import com.RAmutex.model.Timeout;
 import com.RAmutex.network.AllConnectionsManager;
 import com.RAmutex.network.AllConnectionsManagerEmpty;
 import com.RAmutex.network.AllConnectionsManagerImpl;
-import com.RAmutex.utils.GlobalParameters;
 import com.RAmutex.ui.NodesTableInitialization;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 import com.RAmutex.ui.TimeoutsTableInitialization;
+import com.RAmutex.utils.GlobalParameters;
+import com.RAmutex.utils.InitializeHelper;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -64,6 +66,7 @@ public class MainWindowController implements Initializable
 
     @Override public void initialize(URL location, ResourceBundle resources)
     {
+        initMyIPandPortTextFields();
 	initTextAreaControllerSingleton();
 
 	NodesTableInitialization nodesTable = new NodesTableInitialization(nodesTableView, IPTableColumn,
@@ -74,7 +77,7 @@ public class MainWindowController implements Initializable
 			descriptionTimeoutTableColumn, timeoutTableColumn);
 	timeoutsTable.initialize();
 
-	initMyIPandPortTextFields();
+
 
 	try
 	{
@@ -96,8 +99,36 @@ public class MainWindowController implements Initializable
     private void initMyIPandPortTextFields()
     {
 	myIPLabel.setText(GlobalParameters.LOCALHOST);
-	myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT));
-	myIDTextField.setText(GlobalParameters.DEFAULT_ID);
+
+        int value = InitializeHelper.getValue();
+
+        switch (value)
+        {
+            case 0:
+            {
+                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT));
+                myIDTextField.setText(GlobalParameters.DEFAULT_ID);
+                break;
+            }
+            case 1:
+            {
+                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 1));
+                myIDTextField.setText("2");
+                break;
+            }
+            case 2:
+            {
+                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 2));
+                myIDTextField.setText("3");
+                break;
+            }
+            case 3:
+            {
+                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 3));
+                myIDTextField.setText("4");
+                break;
+            }
+        }
     }
 
     @FXML
@@ -123,18 +154,23 @@ public class MainWindowController implements Initializable
     @FXML
     private void enterButtonPressed()
     {
-	manager.sendBroadcastEnterMessage();
+	manager.wantEnterToSection();
     }
 
-    @FXML
-    private void leaveButtonPressed()
-    {
 
-    }
 
     public void setStage(Stage stage)
     {
-	//stage.setOnCloseRequest(event -> manager.closeAllSockets());
+	stage.setOnCloseRequest(event ->
+	{
+	    InitializeHelper.resetValue();
+	    //manager.closeAllSockets()
+	})
+	;
     }
 
+    public void leaveButtonPressed()
+    {
+        manager.leaveSection();
+    }
 }

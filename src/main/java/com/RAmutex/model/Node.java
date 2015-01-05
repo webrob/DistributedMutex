@@ -20,7 +20,7 @@ public class Node
 
     public Node()
     {
-        //defaultPort++;
+        defaultPort++;
         defaultID++;
 
         IP = new SimpleStringProperty(GlobalParameters.LOCALHOST);

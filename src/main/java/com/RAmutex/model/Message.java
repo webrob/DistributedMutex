@@ -5,8 +5,20 @@ import com.google.gson.Gson;
 
 public class Message
 {
+    public void setClock(Long clock)
+    {
+        this.clock = clock;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
+
+
     private String id;
-    private Long clockValue;
+    private Long clock;
     private String type;
 
     public String getId()
@@ -14,9 +26,9 @@ public class Message
 	return id;
     }
 
-    public Long getClockValue()
+    public Long getClock()
     {
-	return clockValue;
+	return clock;
     }
 
     public MessageType getType()
@@ -24,10 +36,13 @@ public class Message
 	return Enums.getIfPresent(MessageType.class, type).or(MessageType.UNKNOWN);
     }
 
-    public Message(String id, Long clockValue, MessageType type)
+
+    public Message() {}
+
+    public Message(String id, Long clock, MessageType type)
     {
 	this.id = id;
-	this.clockValue = clockValue;
+	this.clock = clock;
 	this.type = type.toString();
     }
 

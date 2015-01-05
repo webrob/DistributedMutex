@@ -1,11 +1,12 @@
 package com.RAmutex.network.send;
 
-import com.RAmutex.model.Message;
-import com.RAmutex.model.Node;
-import com.RAmutex.utils.GlobalParameters;
+import com.RAmutex.model.*;
 import com.RAmutex.ui.TextAreaControllerSingleton;
+import com.RAmutex.utils.GlobalParameters;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -29,9 +30,11 @@ public class MessageSender extends Thread
     public void run()
     {
 	establishConnection(node);
-	singleton.showApplicationStateMessage("connected to  " + node);
+	serveQueue();
+    }
 
-
+    private void serveQueue()
+    {
 	while (isRunning)
 	{
 	    try
@@ -58,6 +61,21 @@ public class MessageSender extends Thread
 	    try
 	    {
 		tryToConnect(node);
+		singleton.showApplicationStateMessage("connected to  " + node);
+
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(outputSocket.getInputStream()));
+		String initLine = bufferedReader.readLine();
+		Message message = JSONtoMessageConverter.convert(initLine);
+		singleton.showReceivedDataMessage(message + " received from " + node.getIP());
+		if (message.getType() == MessageType.INIT)
+		{
+		    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
+		    criticalSection.updateClock(message.getClock());
+		}
+		else
+		{
+		    throw new IOException();
+		}
 		break;
 	    }
 	    catch (IOException e)
@@ -92,9 +110,7 @@ public class MessageSender extends Thread
     private void tryToConnect(Node node) throws IOException
     {
 	singleton.showApplicationStateMessage("Trying to connect to " + node);
-
 	outputSocket = new Socket(node.getIP(), node.getPort());
-	outputSocket.setTcpNoDelay(true);
 	printWriter = new PrintWriter(outputSocket.getOutputStream(), true);
     }
 
@@ -114,14 +130,16 @@ public class MessageSender extends Thread
 
     private void writeMessageToClient(Message message)
     {
-	if (printWriter != null)
+	printWriter.println(message);
+	if (printWriter.checkError())
 	{
-	    printWriter.println(message);
-	    singleton.showSentDataMessage(message+ " sent to " + node);
+	    singleton.showApplicationStateMessage("No output connection -- reconnecting");
+	    establishConnection(node);
+	    writeMessageToClient(message);
 	}
 	else
 	{
-	    singleton.showSentDataMessage("No output connection");
+	    singleton.showSentDataMessage(message + " sent to " + node);
 	}
     }
 }

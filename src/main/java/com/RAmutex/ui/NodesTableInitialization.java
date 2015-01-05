@@ -4,6 +4,8 @@ import com.RAmutex.model.Node;
 import com.RAmutex.ui.cell.IDAddressEditableCell;
 import com.RAmutex.ui.cell.IPAddressEditableCell;
 import com.RAmutex.ui.cell.IntegerEditableCell;
+import com.RAmutex.utils.GlobalParameters;
+import com.RAmutex.utils.InitializeHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
@@ -44,7 +46,38 @@ public class NodesTableInitialization
     private void putFirstNodeToNodesTable()
     {
 	ObservableList<Node> nodes = FXCollections.observableArrayList();
-	nodes.add(new Node());
+
+	int value = InitializeHelper.getValue();
+	Node node = null;
+	if (value == 0)
+	{
+	    node = new Node();
+	    nodes.add(node);
+
+	    node = new Node();
+	    nodes.add(node);
+
+	    InitializeHelper.incrementValue();
+	}
+	else if (value == 1)
+	{
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT , "1");
+	    nodes.add(node);
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT +2, "3");
+	    nodes.add(node);
+	    InitializeHelper.incrementValue();
+	}
+	else if (value == 2)
+	{
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT , "1");
+	    nodes.add(node);
+
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT + 1, "2");
+	    nodes.add(node);
+	    InitializeHelper.incrementValue();
+	}
+
+
 	nodesTableView.setItems(nodes);
     }
 

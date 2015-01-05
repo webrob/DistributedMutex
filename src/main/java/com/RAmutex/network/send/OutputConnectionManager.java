@@ -1,6 +1,7 @@
 package com.RAmutex.network.send;
 
 import com.RAmutex.model.Message;
+import com.RAmutex.model.MessageManager;
 import com.RAmutex.model.Node;
 
 import java.util.*;
@@ -36,11 +37,11 @@ public class OutputConnectionManager
         sender.start();
     }
 
-    public void sendMessagesToAllNodes(final Message message)
+    public void sendMessagesToAllNodes(Message message)
     {
-        for(String string : nodesQueue.keySet())
+        for(String id : nodesQueue.keySet())
         {
-            BlockingQueue<Message> queue = nodesQueue.get(string);
+            BlockingQueue<Message> queue = nodesQueue.get(id);
             try
             {
                 queue.put(message);
@@ -49,6 +50,20 @@ public class OutputConnectionManager
             {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void sendOkMessageToNode(String id, Long clock)
+    {
+        BlockingQueue<Message> messages = nodesQueue.get(id);
+        Message message = MessageManager.getOkMessage(id, clock);
+        try
+        {
+            messages.put(message);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
         }
     }
 
