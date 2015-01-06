@@ -1,9 +1,6 @@
 package com.RAmutex.network.send;
 
-import com.RAmutex.model.CriticalSectionSingleton;
-import com.RAmutex.model.Message;
-import com.RAmutex.model.MessageManager;
-import com.RAmutex.model.Node;
+import com.RAmutex.model.*;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 import com.RAmutex.utils.GlobalParameters;
 
@@ -20,6 +17,13 @@ public class MessageSender extends Thread
     private boolean isRunning = true;
     private Socket outputSocket;
     private final BlockingQueue<Message> queue;
+    private boolean initMessageWasSent = false;
+    private InitState initState = InitState.notSent;
+
+
+    private enum InitState {
+	notSent , sentBySender, sentByCriticalSection
+    }
 
     public MessageSender(Node node, BlockingQueue<Message> queue)
     {
@@ -37,26 +41,22 @@ public class MessageSender extends Thread
 
     private void sendInitMessage()
     {
+	CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
+	Message initMessage = MessageManager
+			.getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
+	//printWriter.println(initMessage);
+	/*
 	try
 	{
-	    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
-	    Message initMessage = MessageManager
-			    .getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
-	    printWriter.println(initMessage);
-	    if (printWriter.checkError())
-	    {
-		throw new IOException();
-	    }
-	    else
-	    {
-		singleton.showSentDataMessage(initMessage + " sent to " + node);
-	    }
+	    queue.put(initMessage);
 	}
-	catch (IOException e)
+	catch (InterruptedException e)
 	{
-	    establishConnection(node);
-	    sendInitMessage();
+	    e.printStackTrace();
 	}
+	*/
+
+	writeMessageToClient(initMessage);
     }
 
     private void serveQueue()
@@ -65,23 +65,71 @@ public class MessageSender extends Thread
 	{
 	    try
 	    {
+		System.out.println("przed take");
 		Message message = queue.take();
+		System.out.println("po take");
 		serveInternalMessage(message);
 	    }
 	    catch (InterruptedException e)
 	    {
+		initMessageWasSent = false;
 		e.printStackTrace();
 	    }
 	}
     }
 
+    private boolean canSentByCritical = false;
+
+    private boolean sentByCritical = false;
+
     private void serveInternalMessage(Message message)
     {
-	writeMessageToClient(message);
+	if (message.getType() == MessageType.INIT && canSentByCritical)
+	{
+	    writeMessageToClient(message);
+	}
+	else if (message.getType() != MessageType.INIT)
+	{
+	    writeMessageToClient(message);
+	}
+
+	if (message.getType() == MessageType.INIT)
+	{
+	    if (initState == InitState.sentBySender)
+	    {
+		canSentByCritical = true;
+	    }
+	}
+
+	/*
+	if (message.getType() == MessageType.INIT && initState == InitState.sentBySender)
+	{
+	    if (!sentByCritical )
+	    {
+		sentByCritical = true;
+		//initState = InitState.sentByCriticalSection;
+		writeMessageToClient(message);
+	    }
+	}
+	else if (message.getType() != MessageType.INIT)
+	{
+	    writeMessageToClient(message);
+	}
+	*/
+
+	/*
+	if (! (message.getType() == MessageType.INIT && initMessageWasSent))
+	{
+	    initMessageWasSent = true;
+	    writeMessageToClient(message);
+	}
+	*/
     }
 
     private void establishConnection(Node node)
     {
+	//initMessageWasSent = false;
+	initState = InitState.notSent;
 	while (isRunning)
 	{
 	    try
@@ -96,6 +144,9 @@ public class MessageSender extends Thread
 		showMessageAndSleep();
 	    }
 	}
+
+	initState = InitState.sentBySender;
+	//initMessageWasSent = true;
     }
 
     public void stopRunning()

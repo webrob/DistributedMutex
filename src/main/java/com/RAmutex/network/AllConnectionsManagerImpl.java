@@ -108,6 +108,11 @@ public class AllConnectionsManagerImpl implements AllConnectionsManager
         return nodes.size();
     }
 
+    @Override public void sendMessageToNode(String id, Message message)
+    {
+        outputConnectionManager.sendMessageToNode(id, message);
+    }
+
     @Override
     public void sendOkMessageToNode(String id, Long clock)
     {

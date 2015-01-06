@@ -1,9 +1,6 @@
 package com.RAmutex.network.receive;
 
-import com.RAmutex.model.CriticalSectionSingleton;
-import com.RAmutex.model.JSONtoMessageConverter;
-import com.RAmutex.model.Message;
-import com.RAmutex.model.MessageManager;
+import com.RAmutex.model.*;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 
 import java.io.BufferedReader;
@@ -22,6 +19,7 @@ public class MessageReceiver extends Thread
     private Socket clientSocket;
     private final BlockingQueue<Message> criticalSectionQueue;
     private String hostAddress;
+    private boolean reveicedInitMessage;
 
     public MessageReceiver(Socket clientSocket, BlockingQueue<Message> criticalSectionQueue)
     {
@@ -44,7 +42,6 @@ public class MessageReceiver extends Thread
     {
 	try
 	{
-
 	    while (isWorking)
 	    {
 		listenForClientMessages();
@@ -52,7 +49,7 @@ public class MessageReceiver extends Thread
 	}
 	catch (IOException | InterruptedException e)
 	{
-	    e.printStackTrace();
+	   // e.printStackTrace();
 	    singleton.showApplicationStateMessage("connection lost with: " + hostAddress);
 	}
     }
@@ -75,7 +72,7 @@ public class MessageReceiver extends Thread
 	}
 	catch (IOException e)
 	{
-	    e.printStackTrace();
+	    //e.printStackTrace();
 	}
     }
 
@@ -85,7 +82,11 @@ public class MessageReceiver extends Thread
 	{
 	    String line = bufferedReader.readLine();
 	    Message message = JSONtoMessageConverter.convert(line);
-	    criticalSectionQueue.put(message);
+
+	    if (message.getType() != MessageType.INIT)
+	    {
+		criticalSectionQueue.put(message);
+	    }
 
 	    if (line != null)
 	    {

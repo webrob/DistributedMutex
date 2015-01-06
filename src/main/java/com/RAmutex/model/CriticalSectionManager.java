@@ -46,6 +46,10 @@ public class CriticalSectionManager implements Runnable
                 criticalSection.leaveSection();
                 break;
             }
+            case INIT:
+            {
+                criticalSection.initMessage(message);
+            }
         }
     }
 

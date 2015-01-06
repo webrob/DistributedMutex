@@ -38,6 +38,7 @@ public class TimeoutManagerImpl implements TimeoutManager
 
 	long newTimeout = timeout - v * GlobalParameters.getMaxSectionOccupationTimeWithDelay();
 
+        System.out.println(newTimeout);
 	setTimeoutTask(newTimeout);
     }
 

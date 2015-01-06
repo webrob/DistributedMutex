@@ -19,5 +19,8 @@ public interface AllConnectionsManager
     void closeAllSockets();
     int getClientsAmount();
 
+
+    void sendMessageToNode(String id,Message message);
+
     void sendOkMessageToNode(String id, Long clock);
 }

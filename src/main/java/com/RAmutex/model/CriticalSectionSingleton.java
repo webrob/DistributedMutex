@@ -122,7 +122,13 @@ public class CriticalSectionSingleton implements TimeoutListener
 
     private void occupantSection()
     {
+	requestClock = 0;
 	receivedOkMessagesAmount = 0;
+	if (timer != null)
+	{
+	    timer.cancel();
+	}
+	timeoutManager.cancelTimeout();
 	state = SectionState.IN_SECTION;
 	TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
 	singleton.showApplicationStateMessage("enter section");
@@ -132,6 +138,17 @@ public class CriticalSectionSingleton implements TimeoutListener
 	//new Timer(true);
 	timer = new Timer(true);
 	timer.schedule(leaveSectionTimerTask, GlobalParameters.maxSectionOccupationTime);
+    }
+
+    public void initMessage(Message message)
+    {
+	updateClock(message.getClock());
+
+	String nodeID = message.getId();
+
+	message.setId(id);
+	message.setClock(getCurrentClock());
+	allConnectionManager.sendMessageToNode(nodeID, message);
     }
 
     private class LeaveSectionTimerTask extends TimerTask

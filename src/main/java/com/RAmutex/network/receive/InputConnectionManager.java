@@ -1,6 +1,5 @@
 package com.RAmutex.network.receive;
 
-import com.RAmutex.model.CriticalSectionSingleton;
 import com.RAmutex.model.JSONtoMessageConverter;
 import com.RAmutex.model.Message;
 import com.RAmutex.model.MessageType;
@@ -85,18 +84,27 @@ public class InputConnectionManager implements Runnable
     private void receiveInitMessage(Socket clientSocket, String hostAddress) throws IOException
     {
 	BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
 	String initLine = bufferedReader.readLine();
 	Message message = JSONtoMessageConverter.convert(initLine);
+	while (message.getType() != MessageType.INIT)
+	{
+	    initLine = bufferedReader.readLine();
+	    message = JSONtoMessageConverter.convert(initLine);
+	    singleton.showReceivedDataMessage(message + " received from " + hostAddress);
+	}
 	singleton.showReceivedDataMessage(message + " received from " + hostAddress);
-	if (message.getType() == MessageType.INIT)
+	try
 	{
-	    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
-	    criticalSection.updateClock(message.getClock());
+	    criticalSectionQueue.put(message);
 	}
-	else
+	catch (InterruptedException e)
 	{
-	    throw new IOException();
+	    e.printStackTrace();
 	}
+	//CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
+	//criticalSection.updateClock(message.getClock());
+
     }
 
     protected void closeServerSocket()
@@ -116,6 +124,5 @@ public class InputConnectionManager implements Runnable
 	}
 	*/
     }
-
 
 }

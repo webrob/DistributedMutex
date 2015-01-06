@@ -42,6 +42,13 @@ public class AllConnectionsManagerEmpty implements AllConnectionsManager
         return 0;
     }
 
+    @Override public void sendMessageToNode(String id, Message message)
+    {
+
+    }
+
+
+
     @Override public void sendOkMessageToNode(String id, Long clock)
     {
 

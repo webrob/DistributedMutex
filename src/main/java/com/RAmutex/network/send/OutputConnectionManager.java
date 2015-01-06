@@ -74,4 +74,21 @@ public class OutputConnectionManager
     {
 
     }
+
+    public void sendMessageToNode(String id, Message message)
+    {
+	BlockingQueue<Message> messages = nodesQueue.get(id);
+	if (messages!= null)
+	{
+	    try
+	    {
+		messages.put(message);
+	    }
+	    catch (InterruptedException e)
+	    {
+		e.printStackTrace();
+	    }
+	}
+    }
 }
+
