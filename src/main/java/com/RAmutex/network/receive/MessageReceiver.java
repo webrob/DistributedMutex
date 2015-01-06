@@ -44,7 +44,6 @@ public class MessageReceiver extends Thread
     {
 	try
 	{
-	    sendInitMessage();
 
 	    while (isWorking)
 	    {
@@ -55,22 +54,6 @@ public class MessageReceiver extends Thread
 	{
 	    e.printStackTrace();
 	    singleton.showApplicationStateMessage("connection lost with: " + hostAddress);
-	}
-    }
-
-    private void sendInitMessage() throws IOException
-    {
-	CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
-	Message initMessage = MessageManager
-			.getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
-	printWriter.println(initMessage);
-	if (printWriter.checkError())
-	{
-	    throw new IOException();
-	}
-	else
-	{
-	    singleton.showSentDataMessage(initMessage + " sent to " + hostAddress);
 	}
     }
 

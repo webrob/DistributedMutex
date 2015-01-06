@@ -52,7 +52,7 @@ public class TimeoutManagerImpl implements TimeoutManager
     {
 	this.clientsAmount = clientsAmount;
 	timeout = GlobalParameters.getTimeout(clientsAmount);
-	timer = new Timer(true);
+	timer = new Timer(true); //= new Timer(true);
 	start_time = System.nanoTime();
 	setTimeoutTask(timeout);
     }

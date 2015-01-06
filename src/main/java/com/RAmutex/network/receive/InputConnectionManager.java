@@ -1,9 +1,14 @@
 package com.RAmutex.network.receive;
 
+import com.RAmutex.model.CriticalSectionSingleton;
+import com.RAmutex.model.JSONtoMessageConverter;
 import com.RAmutex.model.Message;
+import com.RAmutex.model.MessageType;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -58,11 +63,39 @@ public class InputConnectionManager implements Runnable
 	while (isWorking)
 	{
 	    Socket clientSocket = serverSocket.accept();
-	    MessageReceiver reader = new MessageReceiver(clientSocket, criticalSectionQueue);
-	    reader.setDaemon(true);
-	    reader.start();
 	    InetAddress hostAddress = clientSocket.getInetAddress();
-	    singleton.showApplicationStateMessage("accepted connection from: " + hostAddress);
+
+	    try
+	    {
+		receiveInitMessage(clientSocket, hostAddress.toString());
+		MessageReceiver reader = new MessageReceiver(clientSocket, criticalSectionQueue);
+		reader.setDaemon(true);
+		reader.start();
+
+		singleton.showApplicationStateMessage("accepted connection from: " + hostAddress);
+	    }
+	    catch (IOException e)
+	    {
+		e.printStackTrace();
+	    }
+
+	}
+    }
+
+    private void receiveInitMessage(Socket clientSocket, String hostAddress) throws IOException
+    {
+	BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+	String initLine = bufferedReader.readLine();
+	Message message = JSONtoMessageConverter.convert(initLine);
+	singleton.showReceivedDataMessage(message + " received from " + hostAddress);
+	if (message.getType() == MessageType.INIT)
+	{
+	    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
+	    criticalSection.updateClock(message.getClock());
+	}
+	else
+	{
+	    throw new IOException();
 	}
     }
 

@@ -57,7 +57,10 @@ public class CriticalSectionSingleton implements TimeoutListener
 
     public long getCurrentClock()
     {
-	return currentClock;
+	synchronized (lock)
+	{
+	    return currentClock;
+	}
     }
 
     public void updateClock(long clock)
@@ -126,6 +129,7 @@ public class CriticalSectionSingleton implements TimeoutListener
 
 	LeaveSectionTimerTask leaveSectionTimerTask = new LeaveSectionTimerTask();
 
+	//new Timer(true);
 	timer = new Timer(true);
 	timer.schedule(leaveSectionTimerTask, GlobalParameters.maxSectionOccupationTime);
     }
@@ -164,7 +168,7 @@ public class CriticalSectionSingleton implements TimeoutListener
 	    timeoutManager = new TimeoutManagerImpl(this);
 	    timeoutManager.startWaitingForSection(clientsAmount);
 	    state = SectionState.WAIT_FOR_SECTION;
-	    requestClock = currentClock;
+	    requestClock = getCurrentClock();
 	    Message requestMessage = MessageManager.getRequestMessage(id, requestClock);
 	    allConnectionManager.sendBroadcastEnterMessage(requestMessage);
 	}

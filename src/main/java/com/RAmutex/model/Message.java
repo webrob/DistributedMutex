@@ -15,8 +15,6 @@ public class Message
         this.type = type;
     }
 
-
-
     private String id;
     private Long clock;
     private String type;

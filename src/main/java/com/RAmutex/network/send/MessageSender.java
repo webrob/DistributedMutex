@@ -1,12 +1,13 @@
 package com.RAmutex.network.send;
 
-import com.RAmutex.model.*;
+import com.RAmutex.model.CriticalSectionSingleton;
+import com.RAmutex.model.Message;
+import com.RAmutex.model.MessageManager;
+import com.RAmutex.model.Node;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 import com.RAmutex.utils.GlobalParameters;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -30,7 +31,32 @@ public class MessageSender extends Thread
     public void run()
     {
 	establishConnection(node);
+	sendInitMessage();
 	serveQueue();
+    }
+
+    private void sendInitMessage()
+    {
+	try
+	{
+	    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
+	    Message initMessage = MessageManager
+			    .getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
+	    printWriter.println(initMessage);
+	    if (printWriter.checkError())
+	    {
+		throw new IOException();
+	    }
+	    else
+	    {
+		singleton.showSentDataMessage(initMessage + " sent to " + node);
+	    }
+	}
+	catch (IOException e)
+	{
+	    establishConnection(node);
+	    sendInitMessage();
+	}
     }
 
     private void serveQueue()
@@ -63,19 +89,6 @@ public class MessageSender extends Thread
 		tryToConnect(node);
 		singleton.showApplicationStateMessage("connected to  " + node);
 
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(outputSocket.getInputStream()));
-		String initLine = bufferedReader.readLine();
-		Message message = JSONtoMessageConverter.convert(initLine);
-		singleton.showReceivedDataMessage(message + " received from " + node.getIP());
-		if (message.getType() == MessageType.INIT)
-		{
-		    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
-		    criticalSection.updateClock(message.getClock());
-		}
-		else
-		{
-		    throw new IOException();
-		}
 		break;
 	    }
 	    catch (IOException e)
