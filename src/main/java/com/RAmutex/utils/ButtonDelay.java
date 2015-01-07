@@ -33,7 +33,7 @@ public class ButtonDelay
 	else
 	{
 	    long timeDelay = (System.nanoTime() - startTime) / 1000000;
-	    long timeout = GlobalParameters.getMaxSectionOccupationTimeWithDelay();
+	    long timeout = GlobalParameters.getReconnectionPeriodTimeWithDelay();
 	    if (timeDelay > timeout)
 	    {
 		canPress = true;
