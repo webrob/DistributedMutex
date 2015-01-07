@@ -8,10 +8,11 @@ import com.RAmutex.network.AllConnectionsManagerImpl;
 import com.RAmutex.ui.NodesTableInitialization;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 import com.RAmutex.ui.TimeoutsTableInitialization;
+import com.RAmutex.utils.ButtonDelay;
+import com.RAmutex.utils.ButtonDelayListener;
 import com.RAmutex.utils.GlobalParameters;
 import com.RAmutex.utils.InitializeHelper;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -26,7 +27,7 @@ import java.util.ResourceBundle;
 /**
  * @author Robert
  */
-public class MainWindowController implements Initializable
+public class MainWindowController implements Initializable, ButtonDelayListener
 {
     @FXML private TableView<Timeout> timeoutsTableView;
     @FXML private TableColumn<Timeout, Integer> timeoutTableColumn;
@@ -45,6 +46,8 @@ public class MainWindowController implements Initializable
     @FXML private TextField myIDTextField;
     @FXML private Label myIPLabel;
     private AllConnectionsManager manager = new AllConnectionsManagerEmpty();
+    private  ButtonDelay delay = new ButtonDelay(this);
+
 
     @FXML
     private void connectButtonPressed()
@@ -54,6 +57,7 @@ public class MainWindowController implements Initializable
 
 	manager = new AllConnectionsManagerImpl(nodes, myNode);
 	manager.startConnections();
+	delay.startTimeMeasure();
     }
 
     private Node getMyNode()
@@ -66,7 +70,7 @@ public class MainWindowController implements Initializable
 
     @Override public void initialize(URL location, ResourceBundle resources)
     {
-        initMyIPandPortTextFields();
+	initMyIPandPortTextFields();
 	initTextAreaControllerSingleton();
 
 	NodesTableInitialization nodesTable = new NodesTableInitialization(nodesTableView, IPTableColumn,
@@ -76,8 +80,6 @@ public class MainWindowController implements Initializable
 	TimeoutsTableInitialization timeoutsTable = new TimeoutsTableInitialization(timeoutsTableView,
 			descriptionTimeoutTableColumn, timeoutTableColumn);
 	timeoutsTable.initialize();
-
-
 
 	try
 	{
@@ -100,35 +102,35 @@ public class MainWindowController implements Initializable
     {
 	myIPLabel.setText(GlobalParameters.LOCALHOST);
 
-        int value = InitializeHelper.getValue();
+	int value = InitializeHelper.getValue();
 
-        switch (value)
-        {
-            case 0:
-            {
-                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT));
-                myIDTextField.setText(GlobalParameters.DEFAULT_ID);
-                break;
-            }
-            case 1:
-            {
-                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 1));
-                myIDTextField.setText("2");
-                break;
-            }
-            case 2:
-            {
-                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 2));
-                myIDTextField.setText("3");
-                break;
-            }
-            case 3:
-            {
-                myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 3));
-                myIDTextField.setText("4");
-                break;
-            }
-        }
+	switch (value)
+	{
+	    case 0:
+	    {
+		myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT));
+		myIDTextField.setText(GlobalParameters.DEFAULT_ID);
+		break;
+	    }
+	    case 1:
+	    {
+		myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 1));
+		myIDTextField.setText("2");
+		break;
+	    }
+	    case 2:
+	    {
+		myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 2));
+		myIDTextField.setText("3");
+		break;
+	    }
+	    case 3:
+	    {
+		myPortTextField.setText(Integer.toString(GlobalParameters.DEFAULT_PORT + 3));
+		myIDTextField.setText("4");
+		break;
+	    }
+	}
     }
 
     @FXML
@@ -154,10 +156,11 @@ public class MainWindowController implements Initializable
     @FXML
     private void enterButtonPressed()
     {
-	manager.wantEnterToSection();
+	if (delay.canPress())
+	{
+	    manager.wantEnterToSection();
+	}
     }
-
-
 
     public void setStage(Stage stage)
     {
@@ -171,6 +174,11 @@ public class MainWindowController implements Initializable
 
     public void leaveButtonPressed()
     {
-        manager.leaveSection();
+	manager.leaveSection();
+    }
+
+    @Override public void delayTimeout()
+    {
+	manager.wantEnterToSection();
     }
 }

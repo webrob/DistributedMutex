@@ -57,6 +57,9 @@ public class NodesTableInitialization
 	    node = new Node();
 	    nodes.add(node);
 
+	    node = new Node();
+	    nodes.add(node);
+
 	    InitializeHelper.incrementValue();
 	}
 	else if (value == 1)
@@ -64,6 +67,8 @@ public class NodesTableInitialization
 	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT , "1");
 	    nodes.add(node);
 	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT +2, "3");
+	    nodes.add(node);
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT +3, "4");
 	    nodes.add(node);
 	    InitializeHelper.incrementValue();
 	}
@@ -74,7 +79,20 @@ public class NodesTableInitialization
 
 	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT + 1, "2");
 	    nodes.add(node);
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT + 3, "4");
+	    nodes.add(node);
 	    InitializeHelper.incrementValue();
+	}
+	else if (value == 3)
+	{
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT , "1");
+	    nodes.add(node);
+
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT + 1, "2");
+	    nodes.add(node);
+	    node = new Node("127.0.0.1", GlobalParameters.DEFAULT_PORT + 2, "3");
+	    nodes.add(node);
+	    InitializeHelper.resetValue();
 	}
 
 

@@ -17,8 +17,8 @@ public class MessageSender extends Thread
     private boolean isRunning = true;
     private Socket outputSocket;
     private final BlockingQueue<Message> queue;
-    private boolean initMessageWasSent = false;
     private InitState initState = InitState.notSent;
+    CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
 
 
     private enum InitState {
@@ -41,20 +41,8 @@ public class MessageSender extends Thread
 
     private void sendInitMessage()
     {
-	CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
 	Message initMessage = MessageManager
 			.getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
-	//printWriter.println(initMessage);
-	/*
-	try
-	{
-	    queue.put(initMessage);
-	}
-	catch (InterruptedException e)
-	{
-	    e.printStackTrace();
-	}
-	*/
 
 	writeMessageToClient(initMessage);
     }
@@ -72,15 +60,12 @@ public class MessageSender extends Thread
 	    }
 	    catch (InterruptedException e)
 	    {
-		initMessageWasSent = false;
 		e.printStackTrace();
 	    }
 	}
     }
 
     private boolean canSentByCritical = false;
-
-    private boolean sentByCritical = false;
 
     private void serveInternalMessage(Message message)
     {
@@ -100,35 +85,10 @@ public class MessageSender extends Thread
 		canSentByCritical = true;
 	    }
 	}
-
-	/*
-	if (message.getType() == MessageType.INIT && initState == InitState.sentBySender)
-	{
-	    if (!sentByCritical )
-	    {
-		sentByCritical = true;
-		//initState = InitState.sentByCriticalSection;
-		writeMessageToClient(message);
-	    }
-	}
-	else if (message.getType() != MessageType.INIT)
-	{
-	    writeMessageToClient(message);
-	}
-	*/
-
-	/*
-	if (! (message.getType() == MessageType.INIT && initMessageWasSent))
-	{
-	    initMessageWasSent = true;
-	    writeMessageToClient(message);
-	}
-	*/
     }
 
     private void establishConnection(Node node)
     {
-	//initMessageWasSent = false;
 	initState = InitState.notSent;
 	while (isRunning)
 	{
@@ -146,7 +106,6 @@ public class MessageSender extends Thread
 	}
 
 	initState = InitState.sentBySender;
-	//initMessageWasSent = true;
     }
 
     public void stopRunning()

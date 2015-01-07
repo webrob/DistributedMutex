@@ -15,7 +15,7 @@ public class GlobalParameters
     public static int maxSectionOccupationTime = 5000;
     public static final String MAX_SECTION_OCCUPATION_TIME_DESCRIPTION = "max time of section occupation";
 
-    public static int getMaxSectionOccupationTimeWithDelay()
+    public static long getMaxSectionOccupationTimeWithDelay()
     {
 	return maxSectionOccupationTime + 1000;
     }

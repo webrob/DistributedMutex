@@ -131,7 +131,7 @@ public class CriticalSectionSingleton implements TimeoutListener
 	timeoutManager.cancelTimeout();
 	state = SectionState.IN_SECTION;
 	TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
-	singleton.showApplicationStateMessage("enter section");
+	singleton.showApplicationStateMessage("-------------enter section---------------");
 
 	LeaveSectionTimerTask leaveSectionTimerTask = new LeaveSectionTimerTask();
 
@@ -167,7 +167,7 @@ public class CriticalSectionSingleton implements TimeoutListener
 	sendOkMessagesToQueuedNodes();
 	messagesToSend.clear();
 	TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
-	singleton.showApplicationStateMessage("leave section");
+	singleton.showApplicationStateMessage("-------------leave section--------------");
     }
 
     private void sendOkMessagesToQueuedNodes()
@@ -195,7 +195,7 @@ public class CriticalSectionSingleton implements TimeoutListener
     public void timeout()
     {
 	TextAreaControllerSingleton textAreaController = TextAreaControllerSingleton.getInstance();
-	textAreaController.showApplicationStateMessage("timeout = can enter");
+	textAreaController.showApplicationStateMessage("-------------timeout = can enter");
 	occupantSection();
     }
 }
