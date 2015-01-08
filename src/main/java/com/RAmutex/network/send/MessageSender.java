@@ -3,6 +3,7 @@ package com.RAmutex.network.send;
 import com.RAmutex.model.*;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 import com.RAmutex.utils.GlobalParameters;
+import com.RAmutex.utils.TimeHelper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -53,9 +54,7 @@ public class MessageSender extends Thread
 	{
 	    try
 	    {
-		System.out.println("przed take");
 		Message message = queue.take();
-		System.out.println("po take");
 		serveInternalMessage(message);
 	    }
 	    catch (InterruptedException e)
@@ -132,7 +131,7 @@ public class MessageSender extends Thread
 
     private void tryToConnect(Node node) throws IOException
     {
-	singleton.showApplicationStateMessage("Trying to connect to " + node);
+	//singleton.showApplicationStateMessage("Trying to connect to " + node);
 	outputSocket = new Socket(node.getIP(), node.getPort());
 	printWriter = new PrintWriter(outputSocket.getOutputStream(), true);
     }
@@ -141,7 +140,7 @@ public class MessageSender extends Thread
     {
 	try
 	{
-	    singleton.showApplicationStateMessage("Can't connect to " + node);
+	    //singleton.showApplicationStateMessage("Can't connect to " + node);
 	    Thread.sleep(GlobalParameters.reconnectionPeriod);
 	}
 	catch (InterruptedException e)
@@ -158,11 +157,15 @@ public class MessageSender extends Thread
 	{
 	    singleton.showApplicationStateMessage("No output connection -- reconnecting");
 	    establishConnection(node);
-	    writeMessageToClient(message);
+	    if (message.getType() == MessageType.INIT)
+	    {
+		writeMessageToClient(message);
+	    }
 	}
 	else
 	{
-	    singleton.showSentDataMessage(message + " sent to " + node);
+	    String now = TimeHelper.getCurrentHourWithMiliSec();
+	    singleton.showSentDataMessage(now + " " + message + " sent to " + node);
 	}
     }
 }

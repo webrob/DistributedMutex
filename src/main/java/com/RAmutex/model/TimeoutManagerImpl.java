@@ -10,7 +10,7 @@ import java.util.TimerTask;
  */
 public class TimeoutManagerImpl implements TimeoutManager
 {
-    long start_time;
+    long startTime;
     private TimeoutListener listener;
     private Timer timer;
     private long timeout;
@@ -22,29 +22,48 @@ public class TimeoutManagerImpl implements TimeoutManager
 	this.listener = listener;
     }
 
+    private int okCounter = 0;
+    private boolean canDecrease;
+
     @Override
     public void decreaseTimer()
     {
-	long timeLast = (System.nanoTime() - start_time) / 1000000;
 
-	long v = timeLast / GlobalParameters.getMaxSectionOccupationTimeWithDelay();
-	long rest = timeLast % GlobalParameters.getMaxSectionOccupationTimeWithDelay();
-	if (rest > 0)
+	CriticalSectionSingleton singleton = CriticalSectionSingleton.getInstance();
+	String id = singleton.getId();
+	//timeout -= GlobalParameters.getMaxSectionOccupationTimeWithDelay();
+	//System.out.println("timeout: " + timeout);
+	//timeoutTask.cancel();
+	System.out.println("id: " + id);
+	if (canDecrease)
 	{
+
+	    System.out.println("id: " + id + " timeout: " + timeout);
+	    long timeLast = (System.nanoTime() - startTime) / 1000000;
+
+	    long v = timeLast / GlobalParameters.getMaxSectionOccupationTimeWithDelay();
 	    v++;
+
+	    timeout -= v * GlobalParameters.getMaxSectionOccupationTimeWithDelay();
+	    startTime = System.nanoTime();
+	    timeoutTask.cancel();
+
+	    System.out.println("id: " + id + " timeout: " + timeout + " v " + v);
+
+	    if (timeout >= 0)
+	    {
+		setTimeoutTask(timeout);
+	    }
 	}
+	//okCounter++;
 
-	timeoutTask.cancel();
-
-	long newTimeout = timeout - v * GlobalParameters.getMaxSectionOccupationTimeWithDelay();
-
-        System.out.println(newTimeout);
-	setTimeoutTask(newTimeout);
     }
 
     @Override
     public void cancelTimeout()
     {
+	canDecrease = false;
+	okCounter = 0;
 	timeoutTask.cancel();
     }
 
@@ -52,9 +71,10 @@ public class TimeoutManagerImpl implements TimeoutManager
     public void startWaitingForSection(int clientsAmount)
     {
 	this.clientsAmount = clientsAmount;
+	canDecrease = true;
 	timeout = GlobalParameters.getTimeout(clientsAmount);
 	timer = new Timer(true);
-	start_time = System.nanoTime();
+	startTime = System.nanoTime();
 	setTimeoutTask(timeout);
     }
 
@@ -68,6 +88,7 @@ public class TimeoutManagerImpl implements TimeoutManager
     {
 	@Override public void run()
 	{
+	    okCounter = 0;
 	    listener.timeout();
 	}
     }

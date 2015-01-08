@@ -3,6 +3,7 @@ package com.RAmutex.model;
 import com.RAmutex.network.AllConnectionsManager;
 import com.RAmutex.ui.TextAreaControllerSingleton;
 import com.RAmutex.utils.GlobalParameters;
+import com.RAmutex.utils.TimeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,8 @@ public class CriticalSectionSingleton implements TimeoutListener
 	updateClock(message.getClock());
 	if (shouldLetEnterToSection(message.getId(), message.getClock()))
 	{
-	    allConnectionManager.sendOkMessageToNode(message.getId(), message.getClock());
+	    Message messageToSend = MessageManager.getOkMessage(id, message.getClock());
+	    allConnectionManager.sendMessageToNode(message.getId(), messageToSend);
 	}
 	else
 	{
@@ -110,13 +112,13 @@ public class CriticalSectionSingleton implements TimeoutListener
 	if (message.getClock() == requestClock)
 	{
 	    receivedOkMessagesAmount++;
-	    timeoutManager.decreaseTimer();
 	    if (receivedOkMessagesAmount == clientsAmount)
 	    {
 		timeoutManager.cancelTimeout();
 		receivedOkMessagesAmount = 0;
 		occupantSection();
 	    }
+	    timeoutManager.decreaseTimer();
 	}
     }
 
@@ -131,11 +133,11 @@ public class CriticalSectionSingleton implements TimeoutListener
 	timeoutManager.cancelTimeout();
 	state = SectionState.IN_SECTION;
 	TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
-	singleton.showApplicationStateMessage("-------------enter section---------------");
+	String now = TimeHelper.getCurrentHourWithMiliSec();
+	singleton.showApplicationStateMessage(now + "-------------enter section---------------");
 
 	LeaveSectionTimerTask leaveSectionTimerTask = new LeaveSectionTimerTask();
 
-	//new Timer(true);
 	timer = new Timer(true);
 	timer.schedule(leaveSectionTimerTask, GlobalParameters.maxSectionOccupationTime);
     }
@@ -167,14 +169,17 @@ public class CriticalSectionSingleton implements TimeoutListener
 	sendOkMessagesToQueuedNodes();
 	messagesToSend.clear();
 	TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
-	singleton.showApplicationStateMessage("-------------leave section--------------");
+	String now = TimeHelper.getCurrentHourWithMiliSec();
+	singleton.showApplicationStateMessage(now + "-------------leave section--------------");
     }
 
     private void sendOkMessagesToQueuedNodes()
     {
 	for (Message message : messagesToSend)
 	{
-	    allConnectionManager.sendOkMessageToNode(message.getId(), message.getClock());
+	    Message messageToSend = MessageManager.getOkMessage(id, message.getClock());
+	    allConnectionManager.sendMessageToNode(message.getId(), messageToSend);
+	    //allConnectionManager.sendOkMessageToNode(message.getId(), message.getClock());
 	}
     }
 
