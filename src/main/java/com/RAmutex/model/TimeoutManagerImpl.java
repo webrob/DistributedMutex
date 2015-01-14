@@ -55,8 +55,6 @@ public class TimeoutManagerImpl implements TimeoutManager
 		setTimeoutTask(timeout);
 	    }
 	}
-	//okCounter++;
-
     }
 
     @Override
@@ -89,7 +87,15 @@ public class TimeoutManagerImpl implements TimeoutManager
 	@Override public void run()
 	{
 	    okCounter = 0;
-	    listener.timeout();
+	    long timeDelay = (System.nanoTime() - startTime) / 1000000;
+	    if (timeDelay > timeout + 500)
+	    {
+		listener.sendOkToAllQueuedNodes();
+	    }
+	    else
+	    {
+		listener.timeout();
+	    }
 	}
     }
 }

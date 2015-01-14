@@ -6,4 +6,5 @@ package com.RAmutex.model;
 public interface TimeoutListener
 {
     void timeout();
+    void sendOkToAllQueuedNodes();
 }

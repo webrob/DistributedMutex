@@ -203,4 +203,16 @@ public class CriticalSectionSingleton implements TimeoutListener
 	textAreaController.showApplicationStateMessage("-------------timeout = can enter");
 	occupantSection();
     }
+
+    @Override
+    public void sendOkToAllQueuedNodes()
+    {
+	requestClock = 0;
+	receivedOkMessagesAmount = 0;
+	timer.cancel();
+	timeoutManager.cancelTimeout();
+	state = SectionState.FREE;
+	sendOkMessagesToQueuedNodes();
+	messagesToSend.clear();
+    }
 }
