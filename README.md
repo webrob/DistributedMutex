@@ -1,4 +1,6 @@
 distributed-mutex
 =================
 
-Gradle, JavaFX, JSON, Sockets, BlockingQueue, deamon threads
+Gradle, JavaFX, JSON, Sockets, BlockingQueue, 
+deamon threads
+
