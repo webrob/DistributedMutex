@@ -43,12 +43,13 @@ public class NodesTableInitialization
 	makeNodesTableColumnsEditable();
     }
 
+    // ugly way to initialize
     private void putFirstNodeToNodesTable()
     {
 	ObservableList<Node> nodes = FXCollections.observableArrayList();
 
 	int value = InitializeHelper.getValue();
-	Node node = null;
+	Node node;
 	if (value == 0)
 	{
 	    node = new Node();
@@ -94,8 +95,6 @@ public class NodesTableInitialization
 	    nodes.add(node);
 	    InitializeHelper.resetValue();
 	}
-
-
 	nodesTableView.setItems(nodes);
     }
 

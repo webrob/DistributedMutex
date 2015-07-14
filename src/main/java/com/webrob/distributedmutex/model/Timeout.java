@@ -24,6 +24,16 @@ public class Timeout
 	return description.get();
     }
 
+    public void setDescription(String description)
+    {
+	this.description.set(description);
+    }
+
+    public Integer getValueInMilSec()
+    {
+	return valueInMilSec.get();
+    }
+
     public void setValueInMilSec(Integer valueInMilSec)
     {
 	this.valueInMilSec.set(valueInMilSec);

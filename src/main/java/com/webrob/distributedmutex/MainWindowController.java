@@ -164,12 +164,7 @@ public class MainWindowController implements Initializable, ButtonDelayListener
 
     public void setStage(Stage stage)
     {
-	stage.setOnCloseRequest(event ->
-	{
-	    InitializeHelper.resetValue();
-	    //manager.closeAllSockets()
-	})
-	;
+	stage.setOnCloseRequest(event -> InitializeHelper.resetValue());
     }
 
     public void leaveButtonPressed()

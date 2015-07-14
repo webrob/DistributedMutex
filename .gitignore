@@ -3,6 +3,7 @@
 build
 gradle
 out
+META-INF
 distributed-mutex.iml
 gradlew.bat
 gradlew
