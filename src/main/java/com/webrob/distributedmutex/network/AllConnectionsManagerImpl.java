@@ -16,10 +16,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class AllConnectionsManagerImpl implements AllConnectionsManager
 {
+    private final BlockingQueue<Message> criticalSectionQueue = new LinkedBlockingQueue<>();
     private List<Node> nodes;
     private Node myNode;
     private OutputConnectionManager outputConnectionManager;
-    private final BlockingQueue<Message> criticalSectionQueue = new LinkedBlockingQueue<>();
 
     public AllConnectionsManagerImpl(List<Node> nodes, Node myNode)
     {

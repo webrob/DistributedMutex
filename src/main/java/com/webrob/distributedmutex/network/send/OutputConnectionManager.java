@@ -1,7 +1,6 @@
 package com.webrob.distributedmutex.network.send;
 
 import com.webrob.distributedmutex.model.Message;
-import com.webrob.distributedmutex.model.MessageManager;
 import com.webrob.distributedmutex.model.Node;
 
 import java.util.HashMap;
@@ -52,20 +51,6 @@ public class OutputConnectionManager
             {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void sendOkMessageToNode(String id, Long clock)
-    {
-        BlockingQueue<Message> messages = nodesQueue.get(id);
-        Message message = MessageManager.getOkMessage(id, clock);
-        try
-        {
-            messages.put(message);
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
         }
     }
 

@@ -12,13 +12,14 @@ import java.util.concurrent.BlockingQueue;
 
 public class MessageSender extends Thread
 {
+    private final BlockingQueue<Message> queue;
     private TextAreaControllerSingleton singleton = TextAreaControllerSingleton.getInstance();
     private Node node;
     private PrintWriter printWriter;
     private boolean isRunning = true;
-    private final BlockingQueue<Message> queue;
     private InitState initState = InitState.NOT_SENT;
     private CriticalSectionSingleton criticalSection = CriticalSectionSingleton.getInstance();
+    private boolean canSentByCritical = false;
 
     public MessageSender(Node node, BlockingQueue<Message> queue)
     {
@@ -26,8 +27,7 @@ public class MessageSender extends Thread
 	this.queue = queue;
     }
 
-    @Override
-    public void run()
+    @Override public void run()
     {
 	establishConnection(node);
 	sendInitMessage();
@@ -36,8 +36,7 @@ public class MessageSender extends Thread
 
     private void sendInitMessage()
     {
-	Message initMessage = MessageManager
-			.getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
+	Message initMessage = MessageManager.getInitMessage(criticalSection.getId(), criticalSection.getCurrentClock());
 
 	writeMessageToClient(initMessage);
     }
@@ -57,8 +56,6 @@ public class MessageSender extends Thread
 	    }
 	}
     }
-
-    private boolean canSentByCritical = false;
 
     private void serveInternalMessage(Message message)
     {
